@@ -12,10 +12,10 @@ import lombok.*;
 public class OrderItemRequest {
 
     @NotNull(message = "Product id is required")
-    private String productId;
+    private Long productId;
 
     @NotNull(message = "Quantity is required")
-    @Min(value = 1, message = "Quantity must be greater than 1")
+    @Min(value = 1, message = "Quantity must be at least 1")
     private Integer quantity;
 
 
