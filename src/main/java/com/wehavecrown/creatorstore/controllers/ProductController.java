@@ -1,3 +1,15 @@
+/*
+
+Controller Layer (Presentation Layer) is the entry point of your application.
+It exposes REST API endpoints to the outside world.
+
+* Annotated with @RestController. It should remain "skinny"—meaning
+* zero business logic or direct database queries should happen here.
+* It just delegates to the Service layer.
+*
+
+* */
+
 package com.wehavecrown.creatorstore.controllers;
 
 import com.wehavecrown.creatorstore.entities.Product;

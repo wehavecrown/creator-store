@@ -1,3 +1,6 @@
+// A DTO is a dumb object used purely to move data between the client and the server.
+// No business logic, just fields, getters, setters, or Java Records.
+
 package com.wehavecrown.creatorstore.dto;
 
 import jakarta.validation.Valid;

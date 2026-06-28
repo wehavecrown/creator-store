@@ -1,3 +1,6 @@
+// Service Layer is the heart of your application. This is where your business logic lives.
+// Annotated with @Service. This is where you inject your repositories and use @Transactional to ensure data integrity.
+
 package com.wehavecrown.creatorstore.services;
 
 import com.wehavecrown.creatorstore.entities.Product;

@@ -1,3 +1,6 @@
+// Entity is a direct mapping to a table in your database using an ORM (Object-Relational Mapping) framework like Hibernate/JPA.
+// Annotated with @Entity, contains a primary key (@Id), and reflects the exact schema of your database table.
+
 package com.wehavecrown.creatorstore.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;

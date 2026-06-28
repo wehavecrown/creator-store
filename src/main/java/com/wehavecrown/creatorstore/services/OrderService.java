@@ -1,3 +1,6 @@
+// Service Layer is the heart of your application. This is where your business logic lives.
+// Annotated with @Service. This is where you inject your repositories and use @Transactional to ensure data integrity.
+
 package com.wehavecrown.creatorstore.services;
 
 import com.wehavecrown.creatorstore.dto.OrderItemRequest;
@@ -74,4 +77,12 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
+    public List<Order> getAllOrders() {
+        return orderRepository.findAll();
+    }
+
+    public Order getOrderById(Long id) {
+        return orderRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Order not found with id: " + id));
+    }
 }
