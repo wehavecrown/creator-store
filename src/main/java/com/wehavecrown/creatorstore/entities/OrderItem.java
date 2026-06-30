@@ -1,5 +1,6 @@
-// Entity is a direct mapping to a table in your database using an ORM (Object-Relational Mapping) framework like Hibernate/JPA.
-// Annotated with @Entity, contains a primary key (@Id), and reflects the exact schema of your database table.
+/*
+*
+* */
 
 package com.wehavecrown.creatorstore.entities;
 
@@ -37,7 +38,38 @@ public class OrderItem {
     private Product product;
 }
 
-/* Relations:
+/*
+ * DATABASE TABLE STRUCTURE: order_items
+ *
+ * COLUMNS:
+ *   - id (BIGINT, PK, AUTO_INCREMENT)
+ *   - quantity (INT, NOT NULL)
+ *   - price_at_purchase (DECIMAL, NOT NULL)
+ *   - order_id (BIGINT, FK to orders.id, NOT NULL)
+ *   - product_id (BIGINT, FK to products.id, NOT NULL)
+ *
+ * FOREIGN KEYS:
+ *   - order_id -> orders(id)  (Which order does this item belong to?)
+ *   - product_id -> products(id) (Which product is being ordered?)
+ */
 
-- One order can contain many order items (1 to many)
-- One product can appear in many order items (1 to many) */
+/*
+ * UNDERSTANDING THE RELATIONSHIPS:
+ *
+ * Order (1) ----< OrderItem >---- (1) Product
+ *
+ * 1. Order to OrderItem: One-to-Many (1 order, many items)
+ *    - Order is the "parent" (@JsonManagedReference)
+ *    - OrderItem is the "child" (@JsonBackReference)
+ *
+ * 2. Product to OrderItem: One-to-Many (1 product, many order items)
+ *    - Product uses @JsonIgnore (hides the relationship)
+ *    - OrderItem has @ManyToOne to Product
+ *
+ * 3. The combination creates a Many-to-Many between Order and Product
+ *    - An order can have multiple products
+ *    - A product can appear in multiple orders
+ *    - OrderItem is the "join table" that connects them
+ */
+
+

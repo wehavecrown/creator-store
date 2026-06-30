@@ -1,5 +1,6 @@
 // A DTO is a dumb object used purely to move data between the client and the server.
 // No business logic, just fields, getters, setters, or Java Records.
+// 3. Data Transfer - Request/Response structure
 
 package com.wehavecrown.creatorstore.dto;
 
