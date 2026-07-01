@@ -1,4 +1,8 @@
 /*
+* ENTITY LAYER - Junction/Join Table
+*
+* OrderItem is the "many" side of relationships with both Order and Product
+* This is a classic JOIN TABLE in a Many-to-Many relationship between Order and Product
 *
 * */
 
@@ -72,4 +76,77 @@ public class OrderItem {
  *    - OrderItem is the "join table" that connects them
  */
 
+/*
+ * WHY THIS DESIGN IS IMPORTANT:
+ *
+ * Problem: Many-to-Many between Order and Product
+ * Solution: Create a join table (OrderItem) with extra data
+ *
+ * WITHOUT OrderItem:
+ *   Order (M) ----< (M) Product  (Many-to-Many)
+ *   - Can't store quantity or price at purchase
+ *   - Can't track when item was added
+ *
+ * WITH OrderItem:
+ *   Order (1) ---< OrderItem >--- (1) Product
+ *   - Can store quantity per product
+ *   - Can store price at purchase (historical data)
+ *   - Can add more fields later (discount, tax, etc.)
+ */
 
+/*
+ * COMMON OPERATIONS:
+ *
+ * 1. Get total cost of order:
+ *    BigDecimal total = order.getOrderItems().stream()
+ *        .map(item -> item.getPriceAtPurchase().multiply(
+ *            new BigDecimal(item.getQuantity())))
+ *        .reduce(BigDecimal.ZERO, BigDecimal::add);
+ *
+ * 2. Check if product is in order:
+ *    boolean hasProduct = order.getOrderItems().stream()
+ *        .anyMatch(item -> item.getProduct().getId().equals(productId));
+ *
+ * 3. Create order item with builder:
+ *    OrderItem item = OrderItem.builder()
+ *        .quantity(3)
+ *        .priceAtPurchase(new BigDecimal("29.99"))
+ *        .order(order)
+ *        .product(product)
+ *        .build();
+ *
+ * 4. Adding item to order (in Order class):
+ *    // Helper method in Order entity
+ *    public void addItem(OrderItem item) {
+ *        items.add(item);
+ *        item.setOrder(this);
+ *    }
+ */
+
+/*
+ * THREE-WAY RELATIONSHIP DIAGRAM:
+ *
+ *           ┌─────────────┐
+ *           │    Order    │
+ *           │  (customer) │
+ *           └──────┬──────┘
+ *                  │ 1
+ *                  │
+ *                  │ M
+ *           ┌──────▼──────┐
+ *           │  OrderItem  │
+ *           │ - quantity  │
+ *           │ - priceAt   │
+ *           │   Purchase  │
+ *           └──────┬──────┘
+ *                  │ M
+ *                  │
+ *                  │ 1
+ *           ┌──────▼──────┐
+ *           │   Product   │
+ *           │  (details)  │
+ *           └─────────────┘
+ *
+ * This is a classic normalized database design
+ * Avoids data duplication and maintains referential integrity
+ */
