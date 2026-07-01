@@ -8,35 +8,103 @@
 
 package com.wehavecrown.creatorstore.entities;
 
+// Jackson - manages serialization to prevent infinite loops
+// @JsonBackReference is the "child" side of bidirectional relationship
 import com.fasterxml.jackson.annotation.JsonBackReference;
+
+// JPA annotations for database mapping
 import jakarta.persistence.*;
+
+// Lombok - reduces boilerplate code
 import lombok.*;
 
+// Java types
 import java.math.BigDecimal;
 
+/*
+* @Entity - Maps to "order_items" table in database
+* @Table - Explicit table name
+* */
 @Entity
 @Table(name = "order_items")
+
+/*
+* Lombok annotations:
+* @Getter/@Setter - Generate getters and setters
+* @AllArgsConstructor - Constructor with all fields
+* @NoArgsConstructor - Empty constructor (required by JPA)
+* @Builder - Builder patter for clean object creation
+*
+* Example: OrderItem.builder()
+*       .quantity(2)
+*       .priceAtPurchase(new BigDecimal("49.99"))
+*       .order(order)
+*       .product(product)
+*       .build();
+* */
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class OrderItem {
+    /*
+    * Primary key - auto-incremented by database
+    * Each record in order_items is unique
+    * */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /*
+    * @Column(nullable = false) - Quantity is required
+    * How many units of this product in the order
+    * */
     @Column(nullable = false)
     private Integer quantity;
 
+    /*
+    * priceAtPurchase - snapshot of product price at time of order
+    * */
     @Column(name = "price_at_purchase", nullable = false)
     private BigDecimal priceAtPurchase;
 
+    /*
+     * @JsonBackReference - The "backward" part of the relationship
+     * Paired with @JsonManagedReference in Order
+     *
+     * Purpose: Prevents infinite recursion when serializing to JSON
+     * How it works:
+     *   - OrderItem serializes its data
+     *   - When it tries to serialize the Order reference, it stops (ignores it)
+     *   - This breaks the infinite loop
+     *
+     * @ManyToOne - MANY OrderItems belong to ONE Order
+     *   - Foreign key "order_id" in order_items table
+     *
+     * @JoinColumn - Defines the foreign key column
+     *   - name = "order_id" - Column name in database
+     *   - nullable = false - Each order item must belong to an order
+     *
+     * This is the "child" side - Order is the "parent"
+     */
     @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
+    /*
+     * @ManyToOne - MANY OrderItems can reference ONE Product
+     *   - Foreign key "product_id" in order_items table
+     *
+     * @JoinColumn - Defines the foreign key column
+     *   - name = "product_id" - Column name in database
+     *   - nullable = false - Each order item must reference a product
+     *
+     * Why no @JsonBackReference here? Product uses @JsonIgnore
+     *   - Product doesn't need to serialize its orderItems (using @JsonIgnore)
+     *   - So no infinite loop between OrderItem and Product
+     */
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
